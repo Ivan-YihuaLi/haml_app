@@ -1,0 +1,23 @@
+- if @article.errors.any?
+  %div{:style => "color: red"}
+    = "New Article creation failed. Please check following error messages:"
+    %ul
+      - @article.errors.full_messages.each do |message|
+        %li
+          = message
+
+%div
+  = form_with(model: @article, local: true) do |f|
+    %div
+      = f.label :title
+      %br
+      = f.text_field :title
+    %div
+      = f.label :description
+      %br
+      = f.text_area :description
+    %div
+      = f.submit
+    %button{:style => "margin-top: 10px"}
+      = link_to articles_path, :style => "text-decoration: none;" do
+        = "Cancel"
