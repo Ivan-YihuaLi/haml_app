@@ -12,7 +12,7 @@ class ArticlesController < ApplicationController
   end
 
   def edit
-    # get the current article object to fill the edit article form.
+    # get the current article object to fill the edit article form. in the haml we can just put @article and rails is smart enough to look for required attr for us.
     @article = Article.find(params[:id])
   end
 
@@ -41,5 +41,11 @@ class ArticlesController < ApplicationController
       # We can simply show all the error messages to notice users
       render 'new'
     end #end if
+  end
+
+  def destroy
+    @article = Article.find(params[:id])
+    @article.destroy
+    redirect_to articles_path
   end
 end
