@@ -1,6 +1,8 @@
 class ArticlesController < ApplicationController
+  # By doing this we can run the set_article before these 4 methods/actions executed.
+  before_action :set_article, only:[:show, :edit, :update, :destroy]
+
   def show
-    @article = Article.find(params[:id])
   end
 
   def index
@@ -13,12 +15,10 @@ class ArticlesController < ApplicationController
 
   def edit
     # get the current article object to fill the edit article form. in the haml we can just put @article and rails is smart enough to look for required attr for us.
-    @article = Article.find(params[:id])
   end
 
   def update
-    @article = Article.find(params[:id])
-    if @article.update(params.require(:article).permit(:title, :description))
+    if @article.update(article_params_whitelist)
       flash[:notice] = "Article updated successfully"
       redirect_to @article
     else
@@ -28,7 +28,7 @@ class ArticlesController < ApplicationController
 
   #Rails is smart enough to get all the corresponding article attributes with params[:article], but first we need to whitelist the accepting attributes
   def create
-    @article = Article.new(params.require(:article).permit(:title, :description))
+    @article = Article.new(article_params_whitelist)
     # when we are trying to save articles with invalid title/descriptions, the validation we created in article model will prevent the invalid articles from saving to the
     # database, and the app is now redirecting to the index page. We need to somehow remind the user that the article is invalid and therefore not saving to the database.
     if @article.save
@@ -44,8 +44,17 @@ class ArticlesController < ApplicationController
   end
 
   def destroy
-    @article = Article.find(params[:id])
     @article.destroy
     redirect_to articles_path
+  end
+
+  private
+  # any instance method after private keyword will become a private method
+  def set_article
+    @article = Article.find(params[:id])
+  end
+
+  def article_params_whitelist
+    params.require(:article).permit(:title, :description)
   end
 end
